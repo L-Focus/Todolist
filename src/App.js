@@ -1,25 +1,97 @@
-import logo from './logo.svg';
+import React,{Component} from 'react'
+import Header from '../src/components/Header/Header'
+import List from '../src/components/List/List'
+import Footer from '../src/components/Footer/Footer'
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default class App extends Component{
+
+    // 状态在哪里操作状态的方法就在哪里
+
+    // 初始化状态
+    state = {
+        todos:[
+            {id:'001',name:'吃饭',done:true},
+            {id:'002',name:'睡觉',done:true},
+            {id:'003',name:'打代码',done:false},
+            {id:'004',name:'逛街',done:true}
+        ]
+    }
+
+    // 用于添加一个todo，接收的参数时todo对象
+    addTodo = (todoObj)=>{
+        // 获取原todo
+        const {todos} = this.state
+        // 追加一个todo
+        const newTodos = [todoObj,...todos]
+        // 更新状态
+        this.setState({todos:newTodos})
+    }
+
+    // updateTodo用于更新一个对象
+    updateTodo = (id,done)=>{
+        // 获取状态中的todos
+        const {todos} = this.state
+        // 匹配处理数据
+        const newTodos = todos.map((todoObj)=>{
+            if(todoObj.id === id){
+                return {...todoObj,done:done}
+            } else{
+                return todoObj
+            }
+        })
+        this.setState({todos:newTodos})
+    }
+
+    // 用于删除一个todo对象
+    deleteTodo = (id)=>{
+        // 获取原来的todos
+        const {todos} = this.state
+        // 删除指定id的todo对象
+        const newTodos = todos.filter((todoObj)=>{
+            return todoObj.id !== id
+        })
+        // 更新状态
+        this.setState({todos:newTodos})
+    }
+
+    // 用于全选
+    checkAllTodo = (done)=>{
+        // 获取原来的todos
+        const {todos} = this.state
+        // 加工数据
+        const newTodos = todos.map((todoObj)=>{
+            return {...todoObj,done:done}
+        })
+
+        this.setState({todos:newTodos})
+    }
+
+    // 用于清除全选
+    clearAllDone = ()=>{
+        // 获取原来的todos
+        const {todos} = this.state
+        // 过滤数据
+        const newTodos = todos.filter((todoObj)=>{
+            return todoObj.done === false       // 与 return !todoObj.done 等价
+        })
+
+        this.setState({todos:newTodos})
+    }
+
+    render(){
+        const {todos} = this.state
+        return (
+            <div>
+                <div className="todo-container">
+                    <div className="todo-wrap">
+                    <Header addTodo={this.addTodo} />
+                    <List todos={todos} updateTodo={this.updateTodo} deleteTodo={this.deleteTodo}/>
+                    <Footer todos={todos} checkAllTodo={this.checkAllTodo} clearAllDone={this.clearAllDone}/>
+                    </div>
+                </div>
+            </div>
+        )
+    }
 }
 
-export default App;
